@@ -1,11 +1,14 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteBook } from "../features/bookSlice";
 
 const BookList = () => {
     const books = useSelector((state) => state.booksR.books);
     console.log(books)
 
-    const handleDelete = () => {
-        console.log(id);
+    const dispatch = useDispatch();
+
+    const handleDelete = (id) => {
+        dispatch(deleteBook(id))
     }
 
     return (
@@ -13,6 +16,7 @@ const BookList = () => {
 
 
             <h2>List of books</h2>
+
             {books && books.length > 0 ? (
                 <ul>
                     {books.map((book) => {
@@ -20,7 +24,7 @@ const BookList = () => {
                             <li key={book.id}>
                                 {book.title} by {book.author} -
                                 ${book.price} - {book.quantity} pcs
-                                <button onClick={handleDelete}>Delete</button>
+                                <button onClick={() => handleDelete(book.id )}>Delete</button>
                             </li>
                         )
                     })}
