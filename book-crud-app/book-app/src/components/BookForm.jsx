@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addBook } from "../features/bookSlice";
+import { addBook, updateBook } from "../features/bookSlice";
 
-const BookForm = () => {
+const BookForm = ({ bookToEdit, onCancel }) => {
 
     const dispatch = useDispatch();
 
@@ -14,53 +14,73 @@ const BookForm = () => {
         quantity: '',
     })
 
+    useEffect(() => {
+        if (bookToEdit) {
+            setBook(bookToEdit);
+        }
+    }, [bookToEdit])
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setBook((prevBook) => ({ ...prevBook, [name]: value }));
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-        dispatch(addBook({...book, id: nanoid() }));
-    }
+       if(bookToEdit){
+        dispatch(updateBook(book))
+       } else {
+        dispatch(addBook({ ...book, id: nanoid() }));
+       }
+       setBook({
+        title: '',
+        author: '',
+        price: '',
+        quantity: '',
+    });
+
+    };
 
     return (
         <div>
-           <form onSubmit={handleSubmit}>
-           <input
-                type="text"
-                name="title"
-                placeholder="Title"
-                value={book.title}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="text"
-                name="author"
-                placeholder="Author"
-                value={book.author}
-                onChange={handleChange}
-                required
-            />
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Title"
+                    value={book.title}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="text"
+                    name="author"
+                    placeholder="Author"
+                    value={book.author}
+                    onChange={handleChange}
+                    required
+                />
 
-            <input
-                type="number"
-                name="price"
-                placeholder="Price"
-                value={book.price}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="number"
-                name="quantity"
-                placeholder="Quantity"
-                value={book.quantity}
-                onChange={handleChange}
-                required
-            />
-            <button type="submit">AddBook</button>
-           </form>
+                <input
+                    type="number"
+                    name="price"
+                    placeholder="Price"
+                    value={book.price}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="number"
+                    name="quantity"
+                    placeholder="Quantity"
+                    value={book.quantity}
+                    onChange={handleChange}
+                    required
+                />
+                <button type="submit">
+                    {bookToEdit ? "Update Book" : "Add Book"}
+                </button>
+                {bookToEdit && <button onClick={onCancel}>Cancel</button>}
+            </form>
         </div>
     );
 };
